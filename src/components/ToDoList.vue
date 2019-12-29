@@ -1,37 +1,101 @@
 <template>
-    <div class="container flex  w-1/3 h-full shadow-lg flex-col" :class="{'active' : openMenu}">
-        <p class="text-white font-bold w-full h-20 flex items-center mb-6 p-5 shadow-xl tracking-wider">Moje zadania do wykonania</p>
-        <button class="exit font-bold text-gray-600 text-lg" @click="menuShow "> {{ buttonValue }} </button>
-        
-        <h3 class="text-center">Stwórz własne zadanie</h3>
-       
-        <div class="flex flex-col  mx-4 border-b">
-            <form @submit.prevent="createTaks" class="w-full flex flex-col">
-                <input type="text" placeholder="Tytuł..." class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200 font-bold" :class="{'border-red-700' : validation.title}" v-model="title">
-                <span class="text-red-700  text-right text-sm font-bold" v-show="validation.title">Pole tytuł jest wymagane!</span>
-                <input type="text" placeholder="krótki opis" class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200" v-model="description">
-                <div class="flex mx-auto">
-                    <div @click="openHideStatus" title="Ustaw typ zadania" class=" cursor-pointer flex items-center align-center m-3 mr-5 text-3xl text-gray-500 relative"> <StatusList v-on:statusClick="saveStatus" :show="showStatusTypes" /> <i v-if="!showStatusTypes" :class="statusIcon"></i> 
-                    <i v-else class="fas fa-times text-red-600 cursor-pointer"></i>  </div>
-                    <div @click="setPrio" title="Ustaw priorytet (na liście czerwone)" class="cursor-pointer flex items-center align-center m-3 mr-5 text-3xl text-gray-500">  <i class="fab fa-product-hunt" :class="{'text-red-500' : prio}"></i> </div>
-                    <div @click="turnOnAlarm" title="Ustaw lub wyłącz przypomnienie" class="cursor-pointer flex items-center align-center m-3 mr-5 text-3xl text-orange-500">  <i class="far fa-clock" :class="{'text-gray-500' : setAlarm}"></i> </div>
-                    
+  <div
+    class="container flex  w-1/3 h-full shadow-lg flex-col"
+    :class="{ active: openMenu }"
+  >
+    <p
+      class="text-white font-bold w-full h-20 flex items-center mb-6 p-5 shadow-xl tracking-wider"
+    >
+      Moje zadania do wykonania
+    </p>
+    <button class="exit font-bold text-gray-600 text-lg" @click="menuShow">
+      {{ buttonValue }}
+    </button>
 
- 
-                    <input type="date" class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200 font-bold" :class="{'text-gray-500' : setAlarm}" v-model="activeDate" :disabled="setAlarm">
-                    <input type="time" class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200" :class="{'text-gray-500' : setAlarm}" v-model="activeTime" :disabled="setAlarm">
-                </div>
-                
-                <button type="submit" class="border mx-20 my-4 py-2 rounded-md text-white font-bold addButton">Dodaj zadanie</button>
-            </form>
-        </div>
-        <div class="mx-5 h-full overflow-y-scroll p-3 rounded-md mt-2">
-            
-          <TaskContainer v-on:deleteTask="deleteTask" v-for="task in taskList" :key="task.id" :taskData = "task" :date = "date" />
+    <h3 class="text-center">Stwórz własne zadanie</h3>
 
+    <div class="flex flex-col  mx-4 border-b">
+      <form @submit.prevent="createTaks" class="w-full flex flex-col">
+        <input
+          type="text"
+          placeholder="Tytuł..."
+          class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200 font-bold"
+          :class="{ 'border-red-700': validation.title }"
+          v-model="title"
+        />
+        <span
+          class="text-red-700  text-right text-sm font-bold"
+          v-show="validation.title"
+          >Pole tytuł jest wymagane!</span
+        >
+        <input
+          type="text"
+          placeholder="krótki opis"
+          class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200"
+          v-model="description"
+        />
+        <div class="flex mx-auto">
+          <div
+            @click="openHideStatus"
+            title="Ustaw typ zadania"
+            class=" cursor-pointer flex items-center align-center m-3 mr-5 text-3xl text-gray-500 relative"
+          >
+            <StatusList v-on:statusClick="saveStatus" :show="showStatusTypes" />
+            <i v-if="!showStatusTypes" :class="statusIcon"></i>
+            <i v-else class="fas fa-times text-red-600 cursor-pointer"></i>
+          </div>
+          <div
+            @click="setPrio"
+            title="Ustaw priorytet (na liście czerwone)"
+            class="cursor-pointer flex items-center align-center m-3 mr-5 text-3xl text-gray-500"
+          >
+            <i
+              class="fab fa-product-hunt"
+              :class="{ 'text-red-500': prio }"
+            ></i>
+          </div>
+          <div
+            @click="turnOnAlarm"
+            title="Ustaw lub wyłącz przypomnienie"
+            class="cursor-pointer flex items-center align-center m-3 mr-5 text-3xl text-orange-500"
+          >
+            <i class="far fa-clock" :class="{ 'text-gray-500': setAlarm }"></i>
+          </div>
+
+          <input
+            type="date"
+            class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200 font-bold"
+            :class="{ 'text-gray-500': setAlarm }"
+            v-model="activeDate"
+            :disabled="setAlarm"
+          />
+          <input
+            type="time"
+            class="mb-3 bg-transparent border-b py-2 px-2 border-gray-200 text-gray-200"
+            :class="{ 'text-gray-500': setAlarm }"
+            v-model="activeTime"
+            :disabled="setAlarm"
+          />
         </div>
-        
+
+        <button
+          type="submit"
+          class="border mx-20 my-4 py-2 rounded-md text-white font-bold addButton"
+        >
+          Dodaj zadanie
+        </button>
+      </form>
     </div>
+    <div class="mx-5 h-full overflow-y-scroll p-3 rounded-md mt-2">
+      <TaskContainer
+        v-on:deleteTask="deleteTask"
+        v-for="task in taskList"
+        :key="task.id"
+        :taskData="task"
+        :date="date"
+      />
+    </div>
+  </div>
 </template>
 
 <script>
@@ -165,8 +229,6 @@ export default {
       } else {
         this.validation.title = true;
       }
-
-      console.log(localStorage.getItem("toDoData789").toString());
     }
   },
   computed: {
